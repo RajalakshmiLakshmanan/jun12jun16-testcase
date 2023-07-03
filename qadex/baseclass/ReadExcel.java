@@ -20,11 +20,17 @@ public class ReadExcel {
 		Object[][] data = new Object[rowNum][cellNum];
 		for(int i=1;i<=rowNum;i++) {
 			for(int j=0;j<cellNum;j++) {
-				XSSFCell valObj = sheet.getRow(i).getCell(j);
-				String alldata = null;
-				if(valObj != null) {
-					alldata = valObj.getStringCellValue();
+				XSSFCell valObj;
+				try {
+					valObj = sheet.getRow(i).getCell(j);
+				} catch (Exception e) {
+					
+					valObj=null;
 				}
+			String alldata = "";
+				//if(valObj != null) {
+					alldata = valObj.getStringCellValue();
+				//}
 				//sheet.getRow(i).getCell(j).getStringCellValue();
 				data[i-1][j] = alldata;
 			
