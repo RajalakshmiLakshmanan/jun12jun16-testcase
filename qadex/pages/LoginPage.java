@@ -5,12 +5,14 @@ import java.io.IOException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.Assert;
 
 import qadex.baseclass.BaseClass;
 
 public class LoginPage extends BaseClass{
 	
-	public LoginPage(ChromeDriver driver) {
+	public LoginPage(RemoteWebDriver driver) {
 		
 		this.driver =driver;
 		
@@ -22,6 +24,9 @@ public class LoginPage extends BaseClass{
 			if(memId !=null) {
 				driver.findElement(By.id("membership")).sendKeys(memId);
 				reportStep("memberid enterd successfully","pass");
+			}else {
+				
+				reportStep("memberid not enterd ","pass");
 			}
 			
 			
@@ -38,6 +43,8 @@ public class LoginPage extends BaseClass{
 			if(userId != null) {
 			driver.findElement(By.id("firstuserid")).sendKeys(userId);
 			reportStep("userid enterd successfully","pass");
+			}else {
+				reportStep("userid not entered","pass");
 			}
 			
 		} catch (Exception e) {
@@ -53,6 +60,8 @@ public class LoginPage extends BaseClass{
 			if(Password!=null) {
 			driver.findElement(By.id("password")).sendKeys(Password);
 			reportStep("password enterd successfully","pass");
+			}else {
+				reportStep("password not entered ","pass");
 			}
 		} catch (Exception e) {
 			reportStep("password enterd wrongly","fail");
@@ -63,7 +72,13 @@ public class LoginPage extends BaseClass{
 		
 		
 	}
-	public LoginPage verifyLoginPage(String errormsg) throws IOException {
+	public HomePage onClickSignin() {
+		
+		driver.findElement(By.name("commit")).click();
+		return new HomePage(driver);
+		
+	}
+	public HomePage verifyLoginPage(String errormsg) throws IOException {
 		try 
         {
         	String text = driver.findElement(By.xpath("//div[@id='notice_flash']//b[1]")).getText();
@@ -78,18 +93,47 @@ public class LoginPage extends BaseClass{
         		
         	}
 		
-		return this;
+		return new HomePage(driver);
 		
 	}
-	public HomePage clickLoginButton() throws IOException {
+	public LoginPage clickLoginButton(String msg) throws IOException {
 		try {
 			driver.findElement(By.name("commit")).click();
-			reportStep("login successful","pass");
-		} catch (Exception e) {
+			String actualTitle = driver.getTitle();
+			String expTitle  = "Food Safety & Brand";
+			if(msg.equalsIgnoreCase("valid")) {
+				
+				if(actualTitle.contains(expTitle)) { 
+					//Assert.assertTrue(true,"pass");
+					reportStep("login successful","pass");
+					Thread.sleep(5000);
+					//LogOut lo = new LogOut(driver);
+					//lo.runLogOut();
+					
+					
+				}else {
+					reportStep("login failure","fail");
+			        // Assert.assertTrue(false, "fail");   
+				}
+				}else if(msg.equalsIgnoreCase("invalid")) {
+					  if(actualTitle.contains(expTitle)) {
+						  reportStep("login successful","fail");  
+					//Assert.assertTrue(false, "pass");
+				}else {
+					reportStep("Login failure-please check login details","pass");
+					
+					//Assert.assertTrue(true,"fail");
+				}
+				
+				
+			}
+			
+			
+		}catch (Exception e) {
 			reportStep("login failure","fail");
 			e.printStackTrace();
 		}
-		return new HomePage(driver);
+		return this;
 		
 	}
 	

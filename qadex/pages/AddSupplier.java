@@ -3,13 +3,15 @@ package qadex.pages;
 import java.io.IOException;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import qadex.baseclass.BaseClass;
 
 public class AddSupplier extends BaseClass {
 	
-	public AddSupplier(ChromeDriver driver) {
+	public AddSupplier(RemoteWebDriver driver) {
 		this.driver = driver;	
 		
 	}
@@ -37,7 +39,7 @@ public class AddSupplier extends BaseClass {
 	}
 	
 	
-	public ManageSupplier onClickSave() throws IOException {
+	public AddSupplier onClickSave() throws IOException {
 		try {
 			driver.findElement(By.xpath("//input[@value='Save']")).click();
 			reportStep("supplier created successfully","pass");
@@ -47,10 +49,34 @@ public class AddSupplier extends BaseClass {
 			
 		}
 		
-		return new ManageSupplier(driver);
+		return this;
+		
+	}
+	public AddSupplier verifyAddSupplier(String errorMsg) throws IOException {
+		      driver.findElement(By.xpath("//input[@value='Save']")).click();
+              String text = driver.findElement(By.xpath("//div[@class='jBox-content']")).getText();
+		
+		       System.out.println(text);
+		try 
+        {
+        	
+        	if(text.contains(errorMsg)) {
+        		
+        		reportStep("expected result matches the actual text","pass");
+        	}else {
+        		reportStep("expected result doesn't matches actual text","fail");
+        	}
+        }catch(WebDriverException e) {
+        		System.out.println("unexpected result came while verifying text");
+        		
+        	}
+		return this;
+		
+	}
+		
 		
 	}
 
 	
 	
-}
+
